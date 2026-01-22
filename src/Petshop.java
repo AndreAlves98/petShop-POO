@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Petshop {
-        private Scanner input = new Scanner(System.in);
-        private ArrayList<Agendamento> agenda = new ArrayList<>();
+    private Scanner input = new Scanner(System.in);
+    private ArrayList<Agendamento> agenda = new ArrayList<>();
 
     public static void main(String[] args) {
         Petshop pet = new Petshop();
@@ -17,13 +17,13 @@ public class Petshop {
         int opcao = 0;
 
         do {
-            for(int i = 0; i < 3; i++) System.out.println();
+            for (int i = 0; i < 3; i++) System.out.println();
 
             System.out.println("#################################################");
             System.out.println("#            NENO BOLACHÃO DA BISLAU            #");
             System.out.println("#              SERVIÇOS DE PETSHOP              #");
             System.out.println("#################################################");
-          //  System.out.printf("* TOTAL AGENDADO: %-17d*\n"                       );
+            //  System.out.printf("* TOTAL AGENDADO: %-17d*\n"                       );
             System.out.println("*===============================================*");
             System.out.println("* MENU PRINCIPAL:                               *");
             System.out.println("*-----------------------------------------------*");
@@ -49,6 +49,7 @@ public class Petshop {
                 case 1 -> novoAgendamento();
                 case 2 -> imprimirComprovante();
                 case 3 -> consultarAgenda();
+                case 4 -> editarAgendamento();
                 case 5 -> System.out.println("Fechando o PetShop... Até amanhã!");
                 default -> System.out.println(">>> Opção inválida! Tente Novamente.");
             }
@@ -56,7 +57,6 @@ public class Petshop {
         } while (opcao != 5);
         input.close();
     }
-
 
 
     public void novoAgendamento() {
@@ -80,14 +80,44 @@ public class Petshop {
             input.nextLine();
         }
 
-        Agendamento novoAgendamento = new Agendamento(tutor, petEst, idade);
+
+        String data = "";
+        while (true) {
+            System.out.print("Data do Serviço (ex: 25/12/2026): ");
+            String dataInput = input.nextLine();
+
+            if (dataInput.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                data = dataInput;
+                break;
+            } else {
+                System.out.println("Formato Inválido! Use o formato (ex: 25/12/2026)");
+            }
+
+        }
+
+        String hora = "";
+        while (true) {
+            System.out.print("Hora da Serviço (ex: 14:00): ");
+            String entrada = input.nextLine();
+
+            if (entrada.matches("\\d{2}:\\d{2}")) {
+                hora = entrada;
+                break;
+            } else {
+                System.out.println("Formato Inválido! Use o formato 00:00");
+            }
+        }
+
+
+        //CONSTRUTUTOR
+        Agendamento novoAgendamento = new Agendamento(tutor, petEst, idade, data, hora);
         agenda.add(novoAgendamento);
 
         System.out.print("Agendando");
         try {
-            for (int i = 0; i< 3; i++ ) {
+            for (int i = 0; i < 3; i++) {
                 System.out.print(".");
-                Thread.sleep (500);
+                Thread.sleep(500);
             }
         } catch (InterruptedException e) {
             System.out.println("Error no timer");
@@ -95,7 +125,7 @@ public class Petshop {
 
         System.out.println("\n\nAgendamento realizado com Sucesso! 🤘");
 
-        int idNovo = agenda.size() -1;
+        int idNovo = agenda.size() - 1;
         novoAgendamento.exibirComprovante(idNovo);
 
         System.out.println("Pressione ENTER para voltar ao menu...");
@@ -107,17 +137,17 @@ public class Petshop {
 
     //IMPRIMIR COMPROVANTE
     public void imprimirComprovante() {
-        if(agenda.isEmpty()) {
+        if (agenda.isEmpty()) {
             System.out.println("\n A agenda está vázia!");
             return;
         }
 
         System.out.print("\nDigite o ID do agendamento para imprimir: ");
-        if(input.hasNextInt()) {
+        if (input.hasNextInt()) {
             int id = input.nextInt();
             input.nextLine();
 
-            if(id >= 0 && id < agenda.size()) {
+            if (id >= 0 && id < agenda.size()) {
                 agenda.get(id).exibirComprovante(id);
             } else {
                 System.out.println(">>> Erro: ID não encontrado!");
@@ -133,16 +163,18 @@ public class Petshop {
 
     public void consultarAgenda() {
         System.out.println("\n--- AGENDA COMPLETA ---");
-        if(agenda.isEmpty()) {
+        if (agenda.isEmpty()) {
             System.out.println("Nenhum cliente agendado.");
         } else {
             for (int i = 0; i < agenda.size(); i++) {
                 Agendamento a = agenda.get(i);
-                System.out.printf("ID [%d] - | TUTOR: %s | NOME PET: %s | IDADE: %s Anos\n",
+                System.out.printf("ID [%d] - | TUTOR: %s | NOME PET: %s | IDADE: %s Anos | Data: %s | HORA: %s \n",
                         i,
-                        a.getTutor() ,
+                        a.getTutor(),
                         a.getPetEst(),
-                        a.getIdade());
+                        a.getIdade(),
+                        a.getdata(),
+                        a.gethora());
             }
         }
         System.out.println("\nPressione ENTER para voltar...");
@@ -150,12 +182,53 @@ public class Petshop {
     }
 
 
+    public void editarAgendamento() {
+        System.out.println("\nQual ID deseja alterar? ");
+        if (!input.hasNextInt()) {
+            input.nextLine();
+            System.out.println("ID Inválido.");
+            return;
+        }
+
+        int id = input.nextInt();
+        input.nextLine();
 
 
+
+        //aqui começa
+        if(id >= 0 && id< agenda.size()) {
+            Agendamento a = agenda.get(id);
+
+            System.out.println("--- EDITANDO: " + a.getTutor() + " ---");
+            System.out.println("[1] Mudar Data");
+            System.out.println("[2] Mudar Horário");
+            System.out.print("Escolha uma opção: ");
+
+            int tipoEdicao = input.nextInt();
+            input.nextLine();
+
+            switch(tipoEdicao) {
+                case 1 -> {
+                    System.out.println("Data Atual: " + a.getdata());
+                    System.out.print("Nova Data: ");
+                    String novaData = input.nextLine();
+                    a.setData(novaData);
+                }
+                case 2 -> {
+                    System.out.println("Hora Atual: " + a.gethora());
+                    System.out.print("Novo Horário: ");
+                    String novaHora = input.nextLine();
+                    a.setHora(novaHora);
+                }
+                default -> System.out.println("Opção inválida.");
+            }
+             System.out.println(">>> Atualizado com Sucesso!");
+        } else {
+            System.out.println(">>> ID inválido.");
+        }
+        System.out.println("Pressione ENTER para continuar...");
+        input.nextLine();
+    }
+
+    //Fim da Classe
 }
-
-
-
-
-
- //Aqui fecha a classe Petshop
