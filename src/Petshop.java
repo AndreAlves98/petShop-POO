@@ -97,7 +97,7 @@ public class Petshop {
 
         String hora = "";
         while (true) {
-            System.out.print("Hora da Serviço (ex: 14:00): ");
+            System.out.print("Hora do Serviço (ex: 14:00): ");
             String entrada = input.nextLine();
 
             if (entrada.matches("\\d{2}:\\d{2}")) {
@@ -108,9 +108,104 @@ public class Petshop {
             }
         }
 
+        //MENU DE OPÇÕES
+
+        String servicoSelecionado = "";
+        double valorServico = 0.0;
+        boolean servicoValido = false;
+
+        while (!servicoValido) {
+            System.out.println("\n==================================");
+            System.out.println("|       SELECIONE O SERVIÇO      |");
+            System.out.println("==================================");
+            System.out.println("| [1] Banho Simples (R$ 45,00)   |");
+            System.out.println("| [2] Banho + Tosa  (R$ 80,00)   |");
+            System.out.println("| [3] Tosa Completa (R$ 120,00)  |");
+            System.out.println("| [4] Consulta Vet  (R$ 150,00)  |");
+            System.out.println("==================================");
+            System.out.print(">>> Escolha uma opção: ");
+
+
+            int opcaoServico = 0;
+            if (input.hasNextInt()) {
+                opcaoServico = input.nextInt();
+                input.nextLine();
+            } else {
+                input.nextLine();
+            }
+
+            switch (opcaoServico) {
+                case 1 -> {
+                    servicoSelecionado = "Banho Simples";
+                    valorServico = 45.00;
+                    servicoValido = true;
+                }
+                case 2 -> {
+                    servicoSelecionado = "Banho + Tosa";
+                    valorServico = 80.00;
+                    servicoValido = true;
+                }
+                case 3 -> {
+                    servicoSelecionado = "Tosa Completa";
+                    valorServico = 120.00;
+                    servicoValido = true;
+                }
+                case 4 -> {
+                    servicoSelecionado = "Consulta Vet";
+                    valorServico = 150.00;
+                    servicoValido = true;
+                }
+                default -> System.out.println(">>> Opção inválida! Escolha entre 1 e 4.");
+            }
+        }
+
+        String pagamentoSelecionado = "";
+        boolean pagamentoValido = false;
+
+        while (!pagamentoValido) {
+            System.out.println("\n==================================");
+            System.out.println("|       FORMA DE PAGAMENTO       |");
+            System.out.println("==================================");
+            System.out.println("| [1] Pix (Instantâneo)          |");
+            System.out.println("| [2] Cartão de Débito           |");
+            System.out.println("| [3] Cartão de Crédito          |");
+            System.out.println("| [4] Dinheiro                   |");
+            System.out.println("==================================");
+            System.out.print(">>> Escolha como pagar: ");
+
+            int opcaoPag = 0;
+            if(input.hasNextInt()) {
+                opcaoPag = input.nextInt();
+                input.nextLine();
+            } else {
+                input.nextLine();
+            }
+
+            switch (opcaoPag) {
+                case 1 -> {
+                    pagamentoSelecionado = "PIX";
+                    pagamentoValido = true;
+                }
+                case 2 -> {
+                    pagamentoSelecionado = "DÉBITO";
+                    pagamentoValido = true;
+                }
+                case 3 -> {
+                    pagamentoSelecionado = "CRÉDITO";
+                    pagamentoValido = true;
+                }
+                case 4 -> {
+                    pagamentoSelecionado = "DINHEIRO";
+                    pagamentoValido = true;
+                }
+                default -> System.out.println(">>> Opção inválida! Escolha entre 1 e 4.");
+            }
+        }
+
+
 
         //CONSTRUTUTOR
-        Agendamento novoAgendamento = new Agendamento(tutor, petEst, idade, data, hora);
+        Agendamento novoAgendamento = new Agendamento(tutor, petEst, idade, data, hora, servicoSelecionado, valorServico, pagamentoSelecionado);
         agenda.add(novoAgendamento);
 
         System.out.print("Agendando");
@@ -118,6 +213,7 @@ public class Petshop {
             for (int i = 0; i < 3; i++) {
                 System.out.print(".");
                 Thread.sleep(500);
+
             }
         } catch (InterruptedException e) {
             System.out.println("Error no timer");
@@ -131,7 +227,6 @@ public class Petshop {
         System.out.println("Pressione ENTER para voltar ao menu...");
         input.nextLine();
     }
-
 
 
 
@@ -161,6 +256,7 @@ public class Petshop {
     }
 
 
+
     public void consultarAgenda() {
         System.out.println("\n--- AGENDA COMPLETA ---");
         if (agenda.isEmpty()) {
@@ -168,18 +264,20 @@ public class Petshop {
         } else {
             for (int i = 0; i < agenda.size(); i++) {
                 Agendamento a = agenda.get(i);
-                System.out.printf("ID [%d] - | TUTOR: %s | NOME PET: %s | IDADE: %s Anos | Data: %s | HORA: %s \n",
+                System.out.printf("ID [%d] - | TUTOR: %s | NOME PET: %s | IDADE: %s Anos | Data: %s | HORA: %s | SERVIÇO: %s \n",
                         i,
                         a.getTutor(),
                         a.getPetEst(),
                         a.getIdade(),
                         a.getdata(),
-                        a.gethora());
+                        a.gethora(),
+                        a.getServico());
             }
         }
         System.out.println("\nPressione ENTER para voltar...");
         input.nextLine();
     }
+
 
 
     public void editarAgendamento() {
