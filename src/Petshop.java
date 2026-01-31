@@ -62,23 +62,49 @@ public class Petshop {
     public void novoAgendamento() {
         System.out.println("\n--- NOVO AGENDAMENTO ---");
 
-        System.out.print("Nome do Tutor: ");
-        String tutor = input.nextLine();
 
-        System.out.print("Nome do Pet: ");
-        String petEst = input.nextLine();
+        String tutor;
+
+        while (true) {
+            System.out.print("Nome do Tutor: ");
+            tutor = input.nextLine();
+
+            if (tutor.matches(".*[^a-zA-Z\\sÀ-ÿ].*")) {
+                System.out.println("Erro: O nome não pode conter números e nem caracteres especiais. Tente novamente.");
+            } else {
+                break; // Sai do loop se não houver números
+            }
+        }
 
 
-        System.out.print("Idade do Pet: ");
+        String petEst;
+
+        while (true) {
+            System.out.print("Nome do Pet: ");
+            petEst = input.nextLine();
+
+            if (petEst.matches(".*[^a-zA-Z\\sÀ-ÿ].*")) {
+                System.out.println("Erro: O nome não pode conter números e nem caracteres especiais. Tente novamente.");
+            } else {
+                break;
+            }
+        }
+
+
         String idade = "";
 
-        if (input.hasNextInt()) {
-            int valorIdade = input.nextInt();
-            input.nextLine();
-            idade = String.valueOf(valorIdade);
-        } else {
-            input.nextLine();
+        while(true) {
+            System.out.print("Idade do Pet: ");
+            String entrada = input.nextLine();
+
+            if (entrada.matches("\\d+")) {
+                idade = entrada;
+                break;
+            } else {
+                System.out.println("Erro: Digite apenas números para a idade.");
+            }
         }
+
 
 
         String data = "";
