@@ -1,20 +1,27 @@
 import RegraPetShop.Agendamento;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Petshop {
-    private Scanner input = new Scanner(System.in);
-    private ArrayList<Agendamento> agenda = new ArrayList<>();
+    // CORREÇÃO: Adicionado 'final' pois essas variáveis não mudam de referência
+    private final Scanner input = new Scanner(System.in);
+    private final ArrayList<Agendamento> agenda = new ArrayList<>();
 
     public static void main(String[] args) {
         Petshop pet = new Petshop();
         pet.exibirMenu();
     }
 
-
     public void exibirMenu() {
-        int opcao = 0;
+        // CORREÇÃO: Removido '= 0' (redundante)
+        int opcao;
 
         do {
             for (int i = 0; i < 3; i++) System.out.println();
@@ -23,7 +30,6 @@ public class Petshop {
             System.out.println("#            NENO BOLACHÃO DA BISLAU            #");
             System.out.println("#              SERVIÇOS DE PETSHOP              #");
             System.out.println("#################################################");
-            //  System.out.printf("* TOTAL AGENDADO: %-17d*\n"                       );
             System.out.println("*===============================================*");
             System.out.println("* MENU PRINCIPAL:                               *");
             System.out.println("*-----------------------------------------------*");
@@ -35,7 +41,7 @@ public class Petshop {
             System.out.println("*===============================================*");
             System.out.print("  *>>> Digite o número da opção: ");
 
-            //Validação contra letras
+            // Validação contra letras
             if (input.hasNextInt()) {
                 opcao = input.nextInt();
                 input.nextLine();
@@ -43,7 +49,6 @@ public class Petshop {
                 input.nextLine();
                 opcao = 0;
             }
-
 
             switch (opcao) {
                 case 1 -> novoAgendamento();
@@ -58,13 +63,10 @@ public class Petshop {
         input.close();
     }
 
-
     public void novoAgendamento() {
         System.out.println("\n--- NOVO AGENDAMENTO ---");
 
-
         String tutor;
-
         while (true) {
             System.out.print("Nome do Tutor: ");
             tutor = input.nextLine();
@@ -72,13 +74,11 @@ public class Petshop {
             if (tutor.matches(".*[^a-zA-Z\\sÀ-ÿ].*")) {
                 System.out.println("Erro: O nome não pode conter números e nem caracteres especiais. Tente novamente.");
             } else {
-                break; // Sai do loop se não houver números
+                break;
             }
         }
 
-
         String petEst;
-
         while (true) {
             System.out.print("Nome do Pet: ");
             petEst = input.nextLine();
@@ -90,9 +90,8 @@ public class Petshop {
             }
         }
 
-
-        String idade = "";
-
+        // CORREÇÃO: Removido '= ""' (redundante)
+        String idade;
         while(true) {
             System.out.print("Idade do Pet: ");
             String entrada = input.nextLine();
@@ -105,9 +104,8 @@ public class Petshop {
             }
         }
 
-
-
-        String data = "";
+        // CORREÇÃO: Removido '= ""' (redundante)
+        String data;
         while (true) {
             System.out.print("Data do Serviço (ex: 25/12/2026): ");
             String dataInput = input.nextLine();
@@ -118,10 +116,10 @@ public class Petshop {
             } else {
                 System.out.println("Formato Inválido! Use o formato (ex: 25/12/2026)");
             }
-
         }
 
-        String hora = "";
+        // CORREÇÃO: Removido '= ""' (redundante)
+        String hora;
         while (true) {
             System.out.print("Hora do Serviço (ex: 14:00): ");
             String entrada = input.nextLine();
@@ -134,8 +132,7 @@ public class Petshop {
             }
         }
 
-        //MENU DE OPÇÕES
-
+        // MENU DE OPÇÕES
         String servicoSelecionado = "";
         double valorServico = 0.0;
         boolean servicoValido = false;
@@ -150,7 +147,6 @@ public class Petshop {
             System.out.println("| [4] Consulta Vet  (R$ 150,00)  |");
             System.out.println("==================================");
             System.out.print(">>> Escolha uma opção: ");
-
 
             int opcaoServico = 0;
             if (input.hasNextInt()) {
@@ -228,9 +224,7 @@ public class Petshop {
             }
         }
 
-
-
-        //CONSTRUTUTOR
+        // CONSTRUTOR
         Agendamento novoAgendamento = new Agendamento(tutor, petEst, idade, data, hora, servicoSelecionado, valorServico, pagamentoSelecionado);
         agenda.add(novoAgendamento);
 
@@ -239,7 +233,6 @@ public class Petshop {
             for (int i = 0; i < 3; i++) {
                 System.out.print(".");
                 Thread.sleep(500);
-
             }
         } catch (InterruptedException e) {
             System.out.println("Error no timer");
@@ -248,15 +241,21 @@ public class Petshop {
         System.out.println("\n\nAgendamento realizado com Sucesso! 🤘");
 
         int idNovo = agenda.size() - 1;
+
+        // exibir no console
         novoAgendamento.exibirComprovante(idNovo);
 
+        System.out.print("Deseja gerar o PDF do comprovante? (S/N): ");
+        String resposta = input.nextLine();
+
+        if(resposta.equalsIgnoreCase("S")) {
+            gerarComprovantePDF(novoAgendamento, idNovo);
+        }
         System.out.println("Pressione ENTER para voltar ao menu...");
         input.nextLine();
     }
 
-
-
-    //IMPRIMIR COMPROVANTE
+    // IMPRIMIR COMPROVANTE
     public void imprimirComprovante() {
         if (agenda.isEmpty()) {
             System.out.println("\n A agenda está vázia!");
@@ -281,8 +280,6 @@ public class Petshop {
         input.nextLine();
     }
 
-
-
     public void consultarAgenda() {
         System.out.println("\n--- AGENDA COMPLETA ---");
         if (agenda.isEmpty()) {
@@ -304,8 +301,6 @@ public class Petshop {
         input.nextLine();
     }
 
-
-
     public void editarAgendamento() {
         System.out.println("\nQual ID deseja alterar? ");
         if (!input.hasNextInt()) {
@@ -317,9 +312,6 @@ public class Petshop {
         int id = input.nextInt();
         input.nextLine();
 
-
-
-        //aqui começa
         if(id >= 0 && id< agenda.size()) {
             Agendamento a = agenda.get(id);
 
@@ -346,7 +338,7 @@ public class Petshop {
                 }
                 default -> System.out.println("Opção inválida.");
             }
-             System.out.println(">>> Atualizado com Sucesso!");
+            System.out.println(">>> Atualizado com Sucesso!");
         } else {
             System.out.println(">>> ID inválido.");
         }
@@ -354,5 +346,44 @@ public class Petshop {
         input.nextLine();
     }
 
-    //Fim da Classe
+    public void gerarComprovantePDF(Agendamento agendamento, int id) {
+        Document document = new Document();
+
+        // Nome do arquivo: Ex: "Comprovante_Agendamento_0.pdf"
+        String nomeArquivo = "Comprovante_Agendamento_" + id + ".pdf";
+
+        try {
+            // cria o arquivo fisico no computador
+            PdfWriter.getInstance(document, new FileOutputStream(nomeArquivo));
+
+            document.open();
+
+            document.add(new Paragraph("========================================="));
+            document.add(new Paragraph("      NENO BOLACHÃO DA BISLAU - PETSHOP"));
+            document.add(new Paragraph("========================================="));
+            document.add(new Paragraph(" ")); // Pula linha
+
+            document.add(new Paragraph("ID DO AGENDAMENTO: " + id));
+            document.add(new Paragraph("TUTOR: " + agendamento.getTutor()));
+            document.add(new Paragraph("PET: " + agendamento.getPetEst() + " (" + agendamento.getIdade() + " anos)"));
+            document.add(new Paragraph("-----------------------------------------"));
+            document.add(new Paragraph("DATA: " + agendamento.getdata()));
+            document.add(new Paragraph("HORA: " + agendamento.gethora()));
+            document.add(new Paragraph("SERVIÇO: " + agendamento.getServico()));
+            document.add(new Paragraph("-----------------------------------------"));
+            document.add(new Paragraph("FORMA DE PAGAMENTO: " + agendamento.getFormaPagamento()));
+            document.add(new Paragraph("VALOR TOTAL: R$ " + agendamento.getValor()));
+
+            document.add(new Paragraph(" "));
+            document.add(new Paragraph("Obrigado pela preferência!"));
+
+            System.out.println(">>> PDF Gerado com sucesso: " + nomeArquivo);
+        } catch (DocumentException | IOException e) {
+            System.err.println("Erro ao gerar PDF: " + e.getMessage());
+        } finally {
+            if(document.isOpen()) {
+                document.close();
+            }
+        }
+    }
 }
